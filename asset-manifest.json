@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/toy_passpartout/static/css/main.68002971.css",
+    "main.js": "/toy_passpartout/static/js/main.783738b9.js",
+    "static/js/787.b9bc320c.chunk.js": "/toy_passpartout/static/js/787.b9bc320c.chunk.js",
+    "static/media/easel.png": "/toy_passpartout/static/media/easel.5ab2c3c33640f2d005b9.png",
+    "index.html": "/toy_passpartout/index.html",
+    "main.68002971.css.map": "/toy_passpartout/static/css/main.68002971.css.map",
+    "main.783738b9.js.map": "/toy_passpartout/static/js/main.783738b9.js.map",
+    "787.b9bc320c.chunk.js.map": "/toy_passpartout/static/js/787.b9bc320c.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.68002971.css",
+    "static/js/main.783738b9.js"
+  ]
+}
