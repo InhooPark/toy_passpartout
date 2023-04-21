@@ -1,15 +1,49 @@
 import "./App.scss";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 function App() {
   const [mymoney, setMymoney] = useState(100);
-  const [canva, setCanva] = useState(true);
+  const [canva, setCanva] = useState(false);
   const [crowd, setCrowd] = useState(false);
   const say = ["음...", "오...", "이정도면...", "이게뭐지?", "과연...", "대단해!", "최악이군", "훌륭해!", "마음에 드는군"];
   const [saystate, setSaystate] = useState(["", "", "", "", ""]);
   const [grade, setGrade] = useState("");
   const [modal, setModal] = useState(false);
   const [price, setPrice] = useState(0);
+  const mouseRef = useRef({ x: 0, y: 0 });
+  let drawing = false;
+
+  function setColorFunc(a) {
+    const canv = document.querySelector(".canvas");
+    const ctx = canv.getContext("2d");
+    ctx.strokeStyle = a;
+  }
+
+  function mousexy(e) {
+    const canv = document.querySelector(".canvas");
+    const ctx = canv.getContext("2d");
+
+    mouseRef.current.x = e.offsetX;
+    mouseRef.current.y = e.offsetY;
+
+    canv.onmousedown = () => (drawing = true);
+    canv.onmouseup = () => (drawing = false);
+
+    ctx.lineWidth = 10;
+    ctx.lineCap = "round";
+
+    if (drawing) {
+      ctx.beginPath();
+      ctx.lineTo(mouseRef.current.x, mouseRef.current.y);
+      ctx.stroke();
+    }
+  }
+
+  function canvasFunc() {
+    const canv = document.querySelector(".canvas");
+
+    canv.addEventListener("mousemove", mousexy);
+  }
 
   function sayFunc() {
     let arr = [];
@@ -25,35 +59,6 @@ function App() {
   function gradeFunc() {
     let random = Math.floor(Math.random() * 100);
     setMymoney(mymoney + random);
-    switch (random) {
-      case random > 96:
-        setGrade("다빈치의 재림인가?");
-        break;
-      case random > 89:
-        setGrade("눈물이 흐르는군, 감동적이야");
-        break;
-      case random > 77:
-        setGrade("훌륭한 그림이야!");
-        break;
-      case random > 60:
-        setGrade("거실에 전시해야겠어");
-        break;
-      case random > 40:
-        setGrade("이정도면 괜찮은데?");
-        break;
-      case random > 23:
-        setGrade("나쁘지 않아");
-        break;
-      case random > 11:
-        setGrade("다빈치의 재림인가?");
-        break;
-      case random > 4:
-        setGrade("형편없는 그림이군");
-        break;
-      default:
-        setGrade("휴지로 쓰면 딱이겠군");
-        break;
-    }
     return random;
   }
   function buy() {
@@ -68,8 +73,19 @@ function App() {
         alert("파산한 길거리 예술가...");
       }
     }
+    canvasFunc();
   }
   function sell() {
+    // 캔버스 이미지 출력해야함
+    const canv = document.querySelector(".canvas");
+    const paint = document.querySelector(".painting_wrap");
+    const ctx = canv.getContext("2d");
+    canv.removeEventListener("mousemove", mousexy);
+
+    const mypaint = canv.toDataURL();
+    paint.style.backgroundImage = `url('${mypaint}')`;
+    ctx.clearRect(0, 0, canv.width, canv.height);
+
     if (canva) {
       setCanva(false);
       setCrowd(true);
@@ -78,6 +94,16 @@ function App() {
       setTimeout(() => {
         setCrowd(false);
         let point = gradeFunc();
+
+        if (point > 96) setGrade("다빈치의 재림인가?");
+        else if (point > 89) setGrade("눈물이 흐르는군, 감동적이야");
+        else if (point > 77) setGrade("훌륭한 그림이야!");
+        else if (point > 60) setGrade("거실에 전시해야겠어");
+        else if (point > 40) setGrade("이정도면 괜찮은데?");
+        else if (point > 23) setGrade("나쁘지 않아");
+        else if (point > 11) setGrade("엉망진창이야");
+        else if (point > 4) setGrade("형편없는 그림이군");
+        else setGrade("휴지로 쓰면 딱이겠군");
         setPrice(point);
         setModal(true);
       }, 6000);
@@ -85,13 +111,6 @@ function App() {
       alert("판매할 캔버스가 없습니다.");
     }
   }
-
-  useEffect(() => {
-    const canvas = document.querySelector(".canvas");
-    const ctx = canvas.getContext("2d");
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }, []);
 
   return (
     <div className="App">
@@ -123,6 +142,14 @@ function App() {
                 그림 판매
               </button>
             )}
+          </div>
+          <div className={canva ? "palette on" : "palette"}>
+            <p onClick={() => setColorFunc("black")}></p>
+            <p onClick={() => setColorFunc("white")}></p>
+            <p onClick={() => setColorFunc("red")}></p>
+            <p onClick={() => setColorFunc("yellow")}></p>
+            <p onClick={() => setColorFunc("green")}></p>
+            <p onClick={() => setColorFunc("blue")}></p>
           </div>
         </section>
         <section className="sell">
